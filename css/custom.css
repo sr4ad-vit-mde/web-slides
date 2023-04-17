@@ -1,0 +1,86 @@
+.container {
+    display: flex;
+}
+.col {
+    flex: 1;
+}
+
+.author-col p {
+    font-size: 0.5em;
+}
+
+.tiny {
+    font-size: 0.4em;
+}
+
+.small {
+    font-size: 0.5em;
+}
+
+.middle {
+    font-size: 0.75em;
+}
+
+.left {
+    text-align: left;
+}
+
+.table.schedule {
+    font-size: 0.5em;
+}
+
+.table.schedule tr th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table.schedule td, th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table.schedule td i {
+    font-style: italic !important;
+}
+
+.table.schedule td b {
+    font-style: bold !important;
+}
+
+/* Replace text on fragment transition (https://github.com/hakimel/reveal.js/issues/745)  */
+.reveal .slides section .fragment.step-fade-in-then-out {
+    opacity: 0;
+    display: none; }
+.reveal .slides section .fragment.step-fade-in-then-out.current-fragment {
+    opacity: 1;
+    display: inline; }
+
+
+/* CSS for header & footer */
+#header-left {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    font-family: sans-serif;
+    font-weight: bold;
+    padding: 10px;
+    color: darkslategray;
+}
+#header-right {
+    position: absolute;
+    top: 0%;
+    right: 0%;
+    font-family: sans-serif;
+    font-weight: bold;
+    padding: 10px;
+    color: darkslategray;
+}
+#footer-left {
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+}

@@ -1,0 +1,249 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>SR4AD Presentation Slides - How Do Vision Transformers See Depth in Single Images?</title>
+
+        <link rel="stylesheet" href="../dist/reset.css">
+        <link rel="stylesheet" href="../dist/reveal.css">
+        <link rel="stylesheet" href="../dist/theme/white.css">
+        <link rel="stylesheet" href="../css/custom.css">
+        <link rel="stylesheet" href="../css/countdown.css">
+
+        <!-- Theme used for syntax highlighted code -->
+        <link rel="stylesheet" href="../plugin/highlight/monokai.css">
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <!-- Title Slide -->
+                <section class="center" data-background-image="img/kigali_background_darker.jpeg">
+                    <h3 style="color:white">How Do Vision Transformers See Depth in Single Images?</h3>
+
+                    <p style="color:white">May 5, 2023</p>
+
+                    <p style="color:white">ICLR Workshop on Scene Representations<br/>For Autonomous Driving</p>
+
+                    <p style="color:white">Peter Mortimer & Hans-Joachim Wünsche</p>
+                </section>
+                <!-- Research Insight -->
+                <section>
+                    <h3>Research Insight</h3>
+                    <ul>
+                        <li>Reproduce the experiments from van Dijk and de Croon's analysis [1] for the original MonoDepth [2] and for novel transformer-based approaches in Monocular Depth Estimation.</li>
+                        <li>Present results in an online format for interactive data visualization.</li>
+                    </ul><br><br><br>
+                <p class="small">[1]: Tom van Dijk and Guido de Croon. <a href="https://openaccess.thecvf.com/content_ICCV_2019/papers/van_Dijk_How_Do_Neural_Networks_See_Depth_in_Single_Images_ICCV_2019_paper.pdf">How Do Neural Networks See Depth in Single Images?</a> <i style="font-style: italic;">International Conference on Computer Vision (ICCV)</i>, 2019.</p>
+                <p class="small">[2]: Clément Godard, Oisin Mac Aodha and Gabriel J. Brostow. <a href="http://visual.cs.ucl.ac.uk/pubs/monoDepth/">Unsupervised Monocular Depth Estimation with Left-Right Consistency</a>. <i style="font-style: italic;">IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</i>, 2017.</p>
+                </section>
+                <section>
+                <section class="center">
+                    <h2>Motivation</h2>
+                </section>
+                <section>
+                    <p><b>How do neural networks see depth in single images?</b></p><br>
+                    <div class="container">
+                        <div class="col">
+                            <ul>
+                        <li class="small">Van Dijk and de Croon's original work analyzed MonoDepth's performance in estimating depth from a single input image.</li><br>
+                        <li class="small">This involved generating synthetic images from the KITTI [1] dataset to test specific visual cues that relate to depth estimation.</li><br>
+                        <li class="small">The experiments covered aspects related to detecting obstacles and the robustness to changes in camera pose</li>
+                    </ul>
+                        </div>
+                        <div class="col" style="margin-top: -100px">
+                            <img width="500px" src="img/original_paper/van_dijk_relative_distance.png">
+                            <p class="tiny" style="margin-top: -20px">MonoDepth's detection performance is evaluated for obstacles placed at different distances.</p>
+                            <img width="500px" src="img/original_paper/van_dijk_emulate_pitch_angles.png">
+                            <p class="tiny" style="margin-top: -30px">The KITTI images are cropped to emulate a minimal change in camera pitch by the shift of the horizon line.</p>
+                        </div>
+                    </div>
+                    <p class="small" style="margin-top: -10px">[1]: Andreas Geiger and Philip Lenz and Raquel Urtasun. <a href="https://www.cvlibs.net/datasets/kitti/">Are we ready for Autonomous Driving? The KITTI Vision Benchmark Suite</a>. <i style="font-style: italic;">IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)</i>, 2012.</p>
+                    
+                </section> 
+                <!-- <section> -->
+                    <!-- <h3>Human Visual Cues for Depth Estimation</h3> -->
+                    <!-- Find interesting visualizations or examples from original literature -->
+                    
+                <!-- </section> -->
+                <section>
+                    <h3>DPT Architecture</h3>
+                    <img src="img/dpt-architecture.png" width="1100px" style="margin-top: -20px">
+                    <p class="tiny">DPT-Hybrid [1] applies a ResNet-50 feature extractor and 4 transformer stages on the embedded 16x16 pixel image patches known as tokens. The tokens are reassembled to image-like features at 4 different resolutions and refined to a dense depth prediction.</p>
+                    <p class="small">[1]: Ren&eacute Ranftl, Alexey Bochkovskiy, Vladlen Koltun. <a href="https://openaccess.thecvf.com/content/ICCV2021/papers/Ranftl_Vision_Transformers_for_Dense_Prediction_ICCV_2021_paper.pdf">Vision Transformers for Dense Prediction</a>. <i style="font-style: italic;">International Conference on Computer Vision (ICCV)</i>, 2021.</p>
+                </section>
+                </section>
+                <!-- Experiments -->
+                <section>
+                <section  class="center">
+                    <h2>Experiments</h2>
+                </section>
+                <section>
+                    <p><b>Position vs. Apparent Size</b></p>
+                    <img src="img/depth_cues_apparent_size.png" width="700px">
+                    <p><b>Obstacle Recognition</b></p>
+                    <img src="img/obstacle-recognition-example/fridge_w_shadow.png">
+                </section>
+                <section class="center">
+                    <p><b>Experiment No. 1</b></p>
+                    <p><b>Position vs. Apparent Size</b></p>
+                    <img src="img/depth_cues_apparent_size.png" width="700px">
+                </section>
+                <section>
+                    <div class="container" style="margin-top: -20px">
+                        <div class="col">
+                            <p>Position</p>
+                            <img src="img/depth_cue_pos_scale/pos.png" width="500px" style="margin-top: -30px">
+                            \[\begin{aligned}
+                                Z_{obj} = \frac{f}{\color{red}{y}} Y
+                            \end{aligned} \]
+                            <p class="small">Human Intuition:<br><span style="font-style: italic;">"Looking downward we usually see things close to us, whereas looking upward we usually see things that are far away."</span> [1]</p>
+                        </div>
+                        <div class="col">
+                            <p>Apparent Size</p>
+                            <img src="img/depth_cue_pos_scale/scale.png" width="500px" style="margin-top: -30px">
+                            \[\begin{aligned}
+                                Z_{obj} = \frac{f}{\color{red}{h}} H
+                            \end{aligned} \]
+                            <p class="small">Human Intuition:<br><span style="font-style: italic;">"If an observer is certain about an object’s size, its retina image size can reveal its distance."</span> [1]</p>
+                        </div>
+                    </div>
+                    <p class="small" style="margin-top: -10px">[1]: E. Brenner and J. B. Smeets. <a href="https://research.vu.nl/ws/portalfiles/portal/84736564/Depth_Perception.pdf">Depth Perception</a>. In <span style="font-style: italic;">Stevens’ Handbook of Experimental Psychology and Cognitive Neuroscience,</span> Depth Perception, pages 385-414. John Wiley & Sons, New York, 4<sup>th</sup> edition, 2018.</p>
+                </section>
+                <section>
+                    <p>Synthetic data in KITTI</p>
+                    <p class="small">Van Dijk and De Croon generated 1862 obstacle-scene pairs from the KITTI dataset with 3 types of visual effects:</p>
+                    <div class="container">
+                        <div class="col">
+                            <p class="small"><b style="color: rgb(2, 114, 188);">Position and Scale</b>: here we change the ground contact point and the scale of the object when increasing the relative distance.</p>
+                        </div>
+                        <div class="col">
+                            <img src="img/pos_vs_scale___normal.gif">
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="col">
+                            <p class="small"><b style="color: rgb(217, 89, 34);">Position Only</b>: here we only change the ground contact point and keep the original scale of the object.</p>
+                        </div>
+                        <div class="col">
+                            <img src="img/pos_vs_scale___pos_only.gif">
+                        </div>
+                    </div>
+                    <div class="container">
+                        <div class="col">
+                            <p class="small"><b style="color: rgb(244, 207, 120);">Scale Only</b>: here we keep the original ground contact point fixed and change the scale of the object.</p>
+                        </div>
+                        <div class="col">
+                            <img src="img/pos_vs_scale___scale_only.gif">
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <iframe data-src="html/pos_vs_scale/position_vs_scale_dpt_monodepth_for_presentation.html" data-preload frameborder='0' scrolling='no' width="100%" height="570px" margin="auto" style="margin-top: -30px"></iframe>
+                    <ul>
+                    <li class="small">DPT accurately predicts depth at farther distances. A combination of position and the apparent size of the object lead to an accurate depth estimate.</li>
+                    <li class="small">MonoDepth relied more heavily on the object's position for its depth estimate.</li>
+                    <li class="small">The apparent size of the object is not a depth cue for DPT and MonoDepth.</li>
+                    </ul>
+                </section>
+                <section class="center">
+                    <p><b>Experiment No. 2</b></p>
+                    <p><b>Obstacle Recognition</b></p>
+                    <img src="img/obstacle-recognition-example/fridge_w_shadow.png">
+                </section>
+                <section>
+                    <p><b>Shadow as Visual Cue</b></p>
+                    <div class="container">
+                        <div class="col">
+                            <img src="img/obstacle-recognition-example/000147_10_fridge.png">
+                            <p class="tiny" style="margin-top: -20px">Synthetic scene generated in KITTI.<br>Here and obstacle without a cast shadow<br>is placed in the center.</p>
+                        </div>
+                        <div class="col">
+                            <img src="img/obstacle-recognition-example/000147_10_fridge_with_shadow.png">
+                            <p class="tiny" style="margin-top: -20px">Synthetic scene generated in KITTI.<br>Here and obstacle with a cast shadow<br>is placed in the center.</p>
+                        </div>
+                    </div>
+                    <p class="small">Human Intuition: <span style="font-style: italic;">"An object’s shadow can give an indication of its distance from a surface: A shadow close to the object suggests that the object is close to the surface, whereas a larger separation suggests a  larger distance from the surface."</span> [1]<br><br></p>
+                    <p class="small">[1]: E. Brenner and J. B. Smeets. <a href="https://research.vu.nl/ws/portalfiles/portal/84736564/Depth_Perception.pdf">Depth Perception</a>. In <span style="font-style: italic;">Stevens’ Handbook of Experimental Psychology and Cognitive Neuroscience,</span> Depth Perception, pages 385-414. John Wiley & Sons, New York, 4<sup>th</sup> edition, 2018.</p>
+                </section>
+                <section>
+                    <p><b>MonoDepth and Shadows</b></p>
+                    <iframe data-src="html/obstacle_recognition_arbitrary_objects/obstacle_recognition_arbitrary_objects_monodepth_with_fridge.html" data-preload frameborder='0' scrolling='no' width="100%" height="300px" margin="auto" style="margin-top: -30px"></iframe>
+                    <iframe data-src="html/obstacle_recognition_arbitrary_objects/obstacle_recognition_arbitrary_objects_monodepth_with_fridge_with_shadow.html" data-preload frameborder='0' scrolling='no' width="100%" height="300px" margin="auto" style="margin-top: -30px"></iframe>
+                    <p class="tiny" style="margin-top: -20px;">MonoDepth detects a larger part of the object, when the cast shadow is added.</p>
+                </section>
+                <section>
+                    <p><b>MonoDepth and DPT in Comparison</b></p>
+                    <iframe data-src="html/obstacle_recognition_arbitrary_objects/obstacle_recognition_arbitrary_objects_fridge_shadow_comparison.html" data-preload frameborder='0' scrolling='no' width="1800px" height="400px" margin="auto" style="margin-top: -30px"></iframe>
+                    <p class="tiny">DPT can detect the obstacle regardless if the cast shadow is added as visual cue.</p>
+                </section>
+                </section>
+                <section>
+                    <p><b>Conclusion</b></p>
+                    <br>
+                    <ul>
+                        <li class="small">DPT still uses the ground contact point as an important visual cue for the depth estimation of obstacles, but is less reliant on it as the original MonoDepth was.</li><br>
+                        <li class="small">DPT is able to detect unusual objects (e.g. fridge) as obstacles in the scene even if the drop shadow as visual cue is absent. MonoDepth heavily relies on the dark border on the ground surface for obstacle detection.</li><br>
+                        <li class="small">One caveat: DPT was trained on a larger meta-dataset called MIX 6 [1] before being fine-tuned on the KITTI dataset.</li>
+                    </ul>
+                    <br><br><br>
+                    <p class="small">[1]: Ren&eacute Ranftl, Katrin Lasinger, David Hafner, Konrad Schindler, Vladlen Koltun. <a href="https://github.com/isl-org/MiDaS">Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-Shot Cross-Dataset Transfer</a>. <i style="font-style: italic;">IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI)</i>, 2019.</p>
+                </section>
+                <section>
+                    <p><b>Thank You for Your Attention!</b></p>
+                    <div class="container">
+                        <div class="col">
+                            <br>
+                            <br>
+                            <p class="small">The blog post is available at:</p>
+                            <p class="small"><a href="https://sr4ad-vit-mde.github.io/blog/2023/visual-cues-monocular-depth-estimation/">sr4ad-vit-mde.github.io/blog/2023/visual-cues-monocular-depth-estimation</a></p>
+                            <img width="250px" src="img/qr_url.png">
+                        </div>
+                        <div class="col">
+                            <img src="img/sr4ad_scroll.gif" style="border: 1px solid black;">
+                            <p class="tiny" style="margin-top: -20px">The full interactive blog post.</p>
+                        </div>
+                </section>
+            </div>
+        </div>
+
+        <div>
+            <div id="header">
+                <div id="header-left">How Do Vision Transformers See Depth in Single Images? - Peter Mortimer, Hans-Joachim Wünsche</div>
+                <div id="header-right">SR4AD @ ICLR 2023</div>
+                <div id="footer-left"><img width="8%" style="padding: 10px 50px;" src="img/tas.png"></div>
+            </div>
+        </div>
+
+        <script src="../dist/reveal.js"></script>
+        <script src="../plugin/notes/notes.js"></script>
+        <script src="../plugin/markdown/markdown.js"></script>
+        <script src="../plugin/math/math.js"></script>
+        <script src="../plugin/highlight/highlight.js"></script>
+        <script>
+            Reveal.initialize({
+                hash: true,
+                transition: 'fade',
+                progress: true,
+                center: false,
+                margin: 0.15,
+
+                // Learn about plugins: https://revealjs.com/plugins/
+                plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ]
+            });
+
+            // On Reveal.js ready event, copy header/footer <div> into each `.slide-background` <div>
+            var header = $('#header').html();
+            if ( window.location.search.match( /print-pdf/gi ) ) {
+                Reveal.addEventListener( 'ready', function( event ) {
+                    $('.slide-background').append(header);
+                });
+            }
+            else {
+                $('div.reveal').append(header);
+           }
+
+        </script>
+    </body>
+</html>
